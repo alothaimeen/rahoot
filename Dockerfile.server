@@ -1,0 +1,14 @@
+FROM alpine:3.21
+
+RUN apk add --no-cache nginx nodejs supervisor
+
+COPY nginx.conf /etc/nginx/http.d/default.conf
+COPY supervisord.conf /etc/supervisord.conf
+
+COPY packages/web/dist /app/web
+COPY packages/socket/dist/index.cjs /app/socket/index.cjs
+COPY config /app/config
+
+EXPOSE 3000
+
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]

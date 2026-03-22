@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #D4AF37;      /* ذهبي */
+  --color-secondary: #1B5E3F;    /* أخضر سعودي */
+  --color-eid-green: #1B5E3F;
+  --color-eid-gold: #D4AF37;
+  --color-eid-sand: #F5E6D3;
+  --color-eid-brown: #8B5A2B;
+  --color-eid-turquoise: #40E0D0;
+  --font-family-arabic: 'Cairo', sans-serif;
+}
+
+* {
+  font-family: var(--font-family-arabic);
+}
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background-color: var(--color-eid-sand);
+  color: var(--color-eid-brown);
+}
+
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer;
+}
+
+.btn-shadow {
+  box-shadow: rgba(0, 0, 0, 0.25) 0px -4px inset;
+}
+
+.btn-shadow span {
+  display: block;
+  transform: translateY(-2px);
+}
+
+.btn-shadow:hover {
+  box-shadow: rgba(0, 0, 0, 0.25) 0px -2px inset;
+}
+
+.btn-shadow:hover span {
+  transform: translateY(0);
+}
+
+.btn-shadow:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.text-outline {
+  -webkit-text-stroke: 2px rgba(0, 0, 0, 0.25);
+}
+
+.shadow-inset {
+  box-shadow: rgba(0, 0, 0, 0.25) 0px -4px inset;
+}
+
+@media (min-width: 768px) {
+  .game-pin-out {
+    clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
+    padding-left: 10px !important;
+  }
+  .game-pin-in {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 9.8% 50%);
+    padding-right: 50px !important;
+  }
+}

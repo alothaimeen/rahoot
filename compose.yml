@@ -1,0 +1,9 @@
+services:
+  rahoot:
+    build: .
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./config:/app/config
+    restart: always
+    container_name: rahoot-app
