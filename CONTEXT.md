@@ -32,32 +32,41 @@ nginx خارجي (host) → port 3002 → Container (rahoot-app)
 
 ### خطوات النشر عند تعديل الكود (عبر Git):
 
-```bash
-# 1. بناء محلي (إذا كنت ترفع ملفات البناء إلى المستودع، وإلا سيتم البناء على السيرفر لاحقاً)
-pnpm run build
+> **المستودع:** https://github.com/alothaimeen/rahoot.git  
+> **السيرفر:** `/root/rahoot/` — تم ربطه بـ git في مارس 2026
 
-# 2. رفع التعديلات إلى المستودع
+```bash
+# خطوة 0: التأكد من عدم وجود بيانات سرية (المستودع عام Public)
+git status
+
+# خطوة 1: رفع التعديلات إلى GitHub
 git add .
-git commit -m "تحديث تطبيق راهوت"
+git commit -m "Auto-deploy: تحديث تطبيق راهوت"
 git push origin main
 
-# 3. على السيرفر: سحب التعديلات وإعادة بناء الحاويات
+# خطوة 2: على السيرفر — سحب التعديلات وإعادة بناء الحاوية
 ssh root@158.220.112.12 "cd /root/rahoot && git pull origin main && docker compose -f compose.yml build --no-cache && docker compose -f compose.yml down && docker compose -f compose.yml up -d"
+
+# خطوة 3: التحقق من عمل الموقع (النتيجة المطلوبة: STATUS:200)
+ssh root@158.220.112.12 'curl -s -o /dev/null -w "STATUS:%{http_code}" http://localhost:3002/'
 ```
 
-**أو إذا تغيرت الـ Static Files فقط (سريع عبر Git):**
+**في حال فشل الموقع:**
 ```bash
-# 1. رفع التعديلات
-git add .
-git commit -m "تحديث الواجهة"
-git push origin main
+ssh root@158.220.112.12 "docker logs rahoot-app --tail=50"
+```
 
-# 2. الدخول للسيرفر وسحب التعديلات لتحديث الواجهة (يعتمد على إعدادات الـ container لدق المجلدات)
+**تحديث سريع (Static Files فقط):**
+```bash
+git add . && git commit -m "تحديث الواجهة" && git push origin main
 ssh root@158.220.112.12 "cd /root/rahoot && git pull origin main && docker compose -f compose.yml restart"
 ```
 
-### ملاحظة مهمة (استخدام Git):
-إذا اعتمدت على `git pull` ولم تعد تستخدم `scp` لنسخ الملفات المبنية `dist` يدوياً إلى الخادم، فتأكد أنك إما ترفع مجلدات البناء إلى مستودعك (غير مفضل عادة)، أو أن `Dockerfile` الخاص بك يقوم بعملية البناء `pnpm run build` عند إنشاء الصورة (Image) على السيرفر.
+### ملاحظة — إعداد السيرفر لأول مرة:
+إذا كان مجلد `/root/rahoot/` على السيرفر غير مرتبط بـ git، نفّذ:
+```bash
+ssh root@158.220.112.12 "cd /root/rahoot && git init && git remote add origin https://github.com/alothaimeen/rahoot.git && git fetch origin && git reset --hard origin/main"
+```
 
 ---
 
